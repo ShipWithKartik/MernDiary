@@ -25,3 +25,24 @@ app.use('/api/auth',authRouter);
 app.listen(3000,()=>{
     console.log("Server is running on port 3000!")
 });
+
+
+app.use((error,req,res,next)=>{
+
+    const statusCode = error.statusCode || 500
+    const message = error.message || 'Internal Server Error'
+
+    res.status(statusCode).json({
+        success:false,
+        statusCode,
+        message
+    })
+
+
+})
+// Request reaches signup controller function , if validation fails --> errorHandler(400,'All Fields are required') . The error Handler function returns a error object 
+// next(error) -> Passes error to Express error middleware , Express skips all the remaining route handlers skips all regular middlewares and jumps directly to the error handling middleware
+
+// Regular Middleware : [Request] -> [Middleware 1] -> [Middleware 2] -> [Route Handler] -> [Response] 
+
+// Error Middleware : [Request] -> [Middleware 1] -> [Route Handler: calls next(error)] -> SKIP -> Error Middleware -> Response 

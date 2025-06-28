@@ -1,12 +1,14 @@
 const bcryptjs = require('bcryptjs');
 const User = require('../models/userModels');
+const { errorHandler } = require('../utils/error');
 
-async function signup(req,res){
+async function signup(req,res,next){
 
     const {username , email , password} = req.body;
 
     if(!username || !email || !password){
-        return res.status(400).json({message:'All Fields are needed'});
+
+        return next(errorHandler(400,'All Fields are required'));
         // Status code 400 -: For bad request
     }
 
@@ -28,9 +30,8 @@ async function signup(req,res){
         res.json({message:'signup successfull'});
     }
     catch(error){
-        res.status(500).json({message:error.message});
+        next(error);
     }
-    // Status code 500 -: For internal server error
 }
 
 

@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 dotenv.config();
 
 const authRouters = require('./routes/authRoutes.js');
+const userRouter = require('./routes/userRoutes.js');
 
-app.use(express.json());
-app.use(express.urlencoded({extended:false}));
 
 mongoose
 .connect(process.env.MONGO_URI)
@@ -19,7 +19,15 @@ mongoose
     })
 
 
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
+
 app.use('/api/auth',authRouters);
+app.use('/api/user',userRouter);
+
+// MIDDLEWARE FIRST - Parse requests before routing 
+// ROUTES AFTER - Now req.body will be available 
 
 
 app.listen(3000,()=>{

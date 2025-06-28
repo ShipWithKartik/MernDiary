@@ -65,6 +65,9 @@ async function signin(req,res,next){
 
         }).json(rest);
         // Browsers stores cookie and Javascript can access it using document.cookie. With httpOnly:true JS cannot access it and Browser still sends it automatically 
+
+        // Login response gives you both: 1) HTTP-Only cookie with minimal token (user ID) 
+        // 2) JSON response with full user data , frontend stores user data in Redux store or Context API , Frontend uses stored user data for UI
          
     }catch(error){
 

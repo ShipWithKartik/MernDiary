@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 dotenv.config();
 
-const authRouter = require('./routes/authRoutes.js');
+const authRouters = require('./routes/authRoutes.js');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
@@ -19,7 +19,7 @@ mongoose
     })
 
 
-app.use('/api/auth',authRouter);
+app.use('/api/auth',authRouters);
 
 
 app.listen(3000,()=>{

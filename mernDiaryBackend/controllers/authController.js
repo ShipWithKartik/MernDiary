@@ -1,6 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const User = require('../models/userModels');
 const { errorHandler } = require('../utils/error');
+const JWT = require('jsonwebtoken');
 
 async function signup(req,res,next){
 
@@ -34,7 +35,46 @@ async function signup(req,res,next){
     }
 }
 
+async function signin(req,res,next){
+
+    const {email , password} = req.body;
+
+    if(!email || !password ||email===''||password===''){
+        return next(errorHandler(400,'All Fields are required'));
+    }
+
+    try{
+        const validUser = await User.findOne({email:email});
+
+        if(!validUser){
+            return next(errorHandler(404,'User Not Found'));
+        }
+
+        const validPassword = bcryptjs.compareSync(password,validUser.password);
+
+        if(!validPassword)
+            return next(errorHandler(400,'Wrong Credentials'));
+        
+        const token = JWT.sign({id:validUser._id},process.env.JWT_SECRET);
+
+        const {password:pass , ...rest} = validUser._doc;
+        // Mongoose document has extra methods and properties ._doc gives you just raw data 
+
+        res.status(200).cookie('access_token',token,{
+            httpOnly:true,
+
+        }).json(rest);
+        // Browsers stores cookie and Javascript can access it using document.cookie. With httpOnly:true JS cannot access it and Browser still sends it automatically 
+         
+    }catch(error){
+
+    }
+
+}
+
+
 
 module.exports = {
-    signup
+    signup,
+    signin
 }

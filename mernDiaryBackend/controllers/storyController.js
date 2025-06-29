@@ -53,7 +53,26 @@ async function getStory(req,res,next){
 
 }
 
+
+async function imageUpload(req,res,next){
+
+    try{
+
+        if(!req.file){
+            return next(errorHandler(400,'No Image Uploaded'));
+        }
+
+        const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`;
+
+        res.status(201).json({imageUrl});
+
+    }catch(error){
+        next(error);
+    }
+}
+
 module.exports = {
     addStory,
-    getStory
+    getStory,
+    imageUpload
 }

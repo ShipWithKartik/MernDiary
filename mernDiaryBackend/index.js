@@ -3,11 +3,13 @@ const app = express();
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 dotenv.config();
 
 const authRouters = require('./routes/authRoutes.js');
 const userRouter = require('./routes/userRoutes.js');
 const storyRouter = require('./routes/storyRoutes.js');
+const { fileURLToPath } = require('url');
 
 
 mongoose
@@ -22,11 +24,13 @@ mongoose
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({extended:false}));
 
 app.use('/api/story',storyRouter);
 app.use('/api/auth',authRouters);
 app.use('/api/user',userRouter);
+
+// Serve static files 
+app.use('/uploads',express.static(path.join(__dirname,'uploads')));
 
 // MIDDLEWARE FIRST - Parse requests before routing 
 // ROUTES AFTER - Now req.body will be available 

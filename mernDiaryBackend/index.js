@@ -7,6 +7,7 @@ dotenv.config();
 
 const authRouters = require('./routes/authRoutes.js');
 const userRouter = require('./routes/userRoutes.js');
+const storyRouter = require('./routes/storyRoutes.js');
 
 
 mongoose
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
+app.use('/api/story',storyRouter);
 app.use('/api/auth',authRouters);
 app.use('/api/user',userRouter);
 

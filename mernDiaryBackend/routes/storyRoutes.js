@@ -1,7 +1,9 @@
 const router = require('express').Router();
-const {addStory} = require('../controllers/storyController');
+const {addStory,getStory} = require('../controllers/storyController');
 const {verifyToken} = require('../utils/verifyUsers');
 
+
 router.post('/add',verifyToken,addStory);
+router.get('/get-all',verifyToken,getStory);
 
 module.exports = router;

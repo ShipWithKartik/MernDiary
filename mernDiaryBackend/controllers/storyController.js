@@ -36,8 +36,24 @@ async function addStory(req,res,next){
 }
 
 
+async function getStory(req,res,next){
 
+    const userId = req.user.id;
+
+    try{
+        const stories = await Story.find({userId}).sort({
+            isFavorite:-1,
+        });
+        res.status(200).json({
+            stories:stories
+        });
+    }catch(error){
+        next(error);
+    }
+
+}
 
 module.exports = {
-    addStory
+    addStory,
+    getStory
 }

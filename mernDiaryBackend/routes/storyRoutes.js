@@ -1,11 +1,17 @@
 const router = require('express').Router();
-const {addStory,getStory,imageUpload} = require('../controllers/storyController');
+const {addStory,getStory,imageUpload,deleteImage} = require('../controllers/storyController');
 const {verifyToken} = require('../utils/verifyUsers');
 const upload = require('../multer');
 
 
 router.post('/add',verifyToken,addStory);
+
 router.get('/get-all',verifyToken,getStory);
+
 router.post('/image-upload',upload.single('image'),imageUpload);
- 
+
+router.delete('/delete-image',deleteImage);
+
 module.exports = router;
+
+

@@ -1,5 +1,7 @@
 const Story = require("../models/storyModel");
 const { errorHandler } = require("../utils/error");
+const path = require('path');
+const fs = require('fs');
 
 async function addStory(req,res,next){
 
@@ -71,8 +73,42 @@ async function imageUpload(req,res,next){
     }
 }
 
+async function deleteImage(req,res,next){
+
+    const {imageUrl} = req.query;
+    // req.query is an object that contains the URL query parameters , suppose the client calls this endpoint : DELETE /delete-image?imageUrl=http://example.com/uploads/photo.jpg 
+    // Then req.query = {imageUrl:'https://example.com/uploads/photo.jpg}
+
+    if(!imageUrl){
+        return next(errorHandler(400,'imageUrl parameter is required!'));
+    }
+
+    try{
+
+        const filename = path.basename(imageUrl);
+        // Extracts the filename from a full URL or path . Eg-: photo.jpg
+
+        const filePath = path.join(__dirname, '..', 'uploads', filename);
+        // Constructs the absolute path to the file on server 
+
+        if(!fs.existsSync(filePath)){
+            return next(errorHandler(404,"File not Found"));
+        }
+
+        await fs.promises.unlink(filePath);
+        // Asynchronously deletes (unlinks) the file from the filesystem . Unlink is the method used to delete files.
+
+        res.status(200).json({message:'Image deleted successfully!'});
+    }
+    catch(error){
+        next(error);
+    }
+
+}
+
 module.exports = {
     addStory,
     getStory,
-    imageUpload
+    imageUpload,
+    deleteImage
 }

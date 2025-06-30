@@ -3,6 +3,7 @@ const { errorHandler } = require("../utils/error");
 const path = require('path');
 const fs = require('fs');
 
+
 async function addStory(req,res,next){
 
     const {title,story,visitedLocation,imageUrl,visitedDate} = req.body;
@@ -106,9 +107,86 @@ async function deleteImage(req,res,next){
 
 }
 
+
+async function editStory(req,res,next){
+    const id = req.params.id;
+
+    const {title , story , visitedLocation , imageUrl , visitedDate} = req.body;
+
+    const userId = req.user.id;
+
+    if(!title || !story || !visitedDate || !imageUrl || !visitedLocation){
+        return next(errorHandler(400,'All Fields are required'));
+    }
+
+    const parsedVisitedDate = new Date(parseInt(visitedDate));
+
+    try{
+
+        const editStory = await Story.findOne({_id:id,userId:userId});
+
+        if(!editStory)
+            next(errorHandler(404,"Story not found"));
+
+        const placeholderImageUrl = `http://localhost:3000/assets/placeholderImage.png`;
+
+        editStory.title = title;
+        editStory.story = story;
+        editStory.visitedLocation = visitedLocation;
+        editStory.imageUrl = imageUrl || placeholderImageUrl;
+        editStory.visitedDate = parsedVisitedDate;
+
+        await editStory.save();
+
+        res.status(200).json({
+            editStory:editStory,
+            message:'Story Edited Succesfully!'
+        })
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+
+async function deleteStory(req,res,next){
+    const id = req.params.id;
+    const userId = req.user.id;
+
+    try{
+        const deleteStory = await Story.findOne({_id:id,userId:userId});
+
+        if(!deleteStory){
+            next(errorHandler(404,'Travel Story not Found'));
+        }
+
+        await Story.deleteOne({_id:id,userId:userId});
+
+        // Extract the filename from imageUrl
+        const imageUrl = deleteStory.imageUrl;
+        const filename = path.basename(imageUrl);
+
+        // absolute path to the file on server
+        const filePath = path.join(__dirname,'..','uploads',filename);
+
+        if(!fs.existsSync(filePath))
+            return next(errorHandler(404,"Image Not Found"));
+
+        await fs.promises.unlink(filePath);
+
+        res.status(200).json({message:'Story deleted Successfully'});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
 module.exports = {
     addStory,
     getStory,
     imageUpload,
-    deleteImage
+    deleteImage,
+    editStory,
+    deleteStory
 }

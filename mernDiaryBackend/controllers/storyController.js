@@ -241,6 +241,55 @@ async function searchStory(req,res,next){
 
 }
 
+async function filterStory(req, res, next) {
+    const { startDate, endDate } = req.query;
+    const userId = req.user.id;
+
+    // Add validation for required parameters
+    if (!startDate || !endDate) {
+        return next(errorHandler(400, 'Both startDate and endDate are required'));
+    }
+
+    try {
+        const start = new Date(parseInt(startDate));
+        const end = new Date(parseInt(endDate));
+        // Convert the startDate and endDate strings to Date objects
+        
+        // Validate the dates
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return next(errorHandler(400, 'Invalid date format'));
+        }
+
+        // Set start to beginning of day and end to end of day for better range matching
+        start.setUTCHours(0, 0, 0, 0);
+        end.setUTCHours(23, 59, 59, 999);
+
+        console.log('Filter dates:', { 
+            start: start.toISOString(), 
+            end: end.toISOString(),
+            userId: userId 
+        });
+
+        const filterStory = await Story.find({
+            userId: userId,
+            visitedDate: {
+                $gte: start, // Greater than or equal to start date
+                $lte: end // Less than or equal to end date
+            }
+        }).sort({ isFavorite: -1 });
+        // $gte and $lte are MongoDB operators that mean "greater than or equal to" and "less than or equal to" respectively
+
+        console.log('Found stories:', filterStory.length);
+
+        res.status(200).json({
+            filteredStories: filterStory
+        });
+
+    } catch (error) {
+        console.error('Filter error:', error);
+        next(error);
+    }
+}
 module.exports = {
     addStory,
     getStory,
@@ -249,7 +298,8 @@ module.exports = {
     editStory,
     deleteStory,
     updateIsFavourite,
-    searchStory
+    searchStory,
+    filterStory
 }
 
 /*

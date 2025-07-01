@@ -54,7 +54,7 @@ app.use((error,req,res,next)=>{
 
 
 })
-// Request reaches signup controller function , if validation fails --> errorHandler(400,'All Fields are required') . The error Handler function returns a error object 
+// Request reaches controller function , if validation fails --> errorHandler(400,'All Fields are required') . The error Handler function returns a error object 
 // next(error) -> Passes error to Express error middleware , Express skips all the remaining route handlers skips all regular middlewares and jumps directly to the error handling middleware
 
 // Regular Middleware : [Request] -> [Middleware 1] -> [Middleware 2] -> [Route Handler] -> [Response] 

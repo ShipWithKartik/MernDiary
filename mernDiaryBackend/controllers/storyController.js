@@ -11,11 +11,13 @@ async function addStory(req,res,next){
     const userId = req.user.id
 
     if(!title || !story || !visitedLocation || !visitedDate || !imageUrl){
-        return next(errorHandler(400,'All fields are required'));
+        return next(errorHandler(400,'All Fields are Required'));
 
     }
 
     const parsedVisitedDate = new Date(parseInt(visitedDate));
+    // From frontend dates are often sent as : Unix Timestamps (milliseconds) in String representation 
+    // parseInt() converts the string to an integer and new Date() creates a JS Date Object
 
     try {
         const newStory = new Story({
@@ -61,6 +63,7 @@ async function imageUpload(req,res,next){
 
     try{
 
+        // Multer adds this file property to request Object , which contains all the file metadata
         if(!req.file){
             return next(errorHandler(400,'No Image Uploaded'));
         }
@@ -73,6 +76,7 @@ async function imageUpload(req,res,next){
         next(error);
     }
 }
+
 
 async function deleteImage(req,res,next){
 
@@ -97,7 +101,7 @@ async function deleteImage(req,res,next){
         }
 
         await fs.promises.unlink(filePath);
-        // Asynchronously deletes (unlinks) the file from the filesystem . Unlink is the method used to delete files.
+        // Calls the OS unlink() system call , which returns a Promise that resolves when deletion (unlinking) completes or Throws an error if file doesn't exist or permission denied
 
         res.status(200).json({message:'Image deleted successfully!'});
     }
@@ -190,3 +194,25 @@ module.exports = {
     editStory,
     deleteStory
 }
+
+/*
+Using both storyId and userId is a critical security measure . Here's why:
+Problem : Any authenticated user can edit/delete ANY story if they know the story ID!
+
+Using both storyId and userId (for editStory , deleteStory)
+Ensures that :
+-> User can edit / delete their OWN stories only 
+-> Even if someone knows a story ID , they can't modify it unless they own it
+*/
+
+
+
+/*
+Express automatically parses query parameters :
+Everything after ? becomes req.query
+
+next() is a callback function that passes control to the next middleware in the stack
+
+next() : Continue to next middleware (normal flow)
+next(error) : Skips to error handling middleware 
+*/

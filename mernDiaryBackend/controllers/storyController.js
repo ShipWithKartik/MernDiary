@@ -186,13 +186,70 @@ async function deleteStory(req,res,next){
     }
 }
 
+
+async function updateIsFavourite(req,res,next){
+    const id = req.params.id;
+    const {isFavorite} = req.body;
+
+    const userId = req.user.id;
+
+    try{
+        const story = await Story.findOne({_id:id,userId:userId});
+
+        if(!story){
+            return next(errorHandler(404,'Story not Found'));
+        }
+
+        story.isFavorite = isFavorite;
+
+        await story.save();
+
+        res.status(200).json({updatedStory:story})
+    }catch(error){
+        next(error);
+    }
+}
+
+async function searchStory(req,res,next){
+    const {query} = req.query;
+    const userId = req.user.id;
+
+    if(!query){
+        return next(errorHandler(404,'Query is required'));
+    }
+
+    try{
+        const searchResults = await Story.find({userId:userId , $or: [
+
+            {title: {$regex: query, $options: 'i'}}, 
+
+            {story: {$regex: query, $options: 'i'}},
+
+            {visitedLocation: {$regex: query, $options: 'i'}} 
+        ]}).sort({isFavorite: -1});
+        // This code performs a search query on the story collection in MongoDB for a specific userId and tries to find all those documents where any of the fields - title , story or visitedLocation match the query string in a case-insensitive manner.
+        // $or :[...] is a MongoDB logical operator that means if any of the conditions inside the array match, the document will be included in the results.
+        // $regex enables partial text match (like SQL LIKE operator)
+        // $options: 'i' makes the regex case-insensitive
+
+        res.status(200).json({
+            searchResults: searchResults
+        });
+    }catch(error){
+        next(error);
+    }
+
+}
+
 module.exports = {
     addStory,
     getStory,
     imageUpload,
     deleteImage,
     editStory,
-    deleteStory
+    deleteStory,
+    updateIsFavourite,
+    searchStory
 }
 
 /*

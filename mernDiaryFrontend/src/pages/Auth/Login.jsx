@@ -1,8 +1,11 @@
-import { useState } from "react"
+import { use, useState } from "react"
 import PasswordInput from "../../Components/PasswordInput"
 import { useNavigate } from "react-router-dom"
 import axiosInstance from "../../utils/axiosInstance"
 import { validateEmail } from "../../utils/helper"
+import {useDispatch, useSelector} from "react-redux"
+import { signInStart , signInSuccess,signInFailure } from "../../redux/slice/userSlice"
+
 
 const Login = () => {
 
@@ -11,6 +14,11 @@ const Login = () => {
   const [error, setError] = useState("")
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const {loading} = useSelector((state)=>state.user);
+  // useSelector takes a function that receives the entire state and returns the part of the state you want to use in your component. In this case, we are getting the loading state from the user slice.(state.user accesses the user slice of the Redux state)
+  // It helps us subscribe to the Redux state and re-render the component only when that specific part changes 
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -28,20 +36,27 @@ const Login = () => {
     setError(null)
 
     try {
+
+      dispatch(signInStart());
       const response = await axiosInstance.post("/auth/signin/", {
         email,
         password,
       })
 
       if (response.data) {
+        dispatch(signInSuccess(response.data));
         navigate("/home")
       }
     } 
     catch (error) {
       if (error?.response?.data?.message) {
         setError(error?.response?.data?.message)
+        
+        dispatch(signInFailure(error?.response?.data?.message));
       } 
       else {
+        dispatch(signInFailure("Something went wrong, please try again later"));
+
         setError("Something went wrong, please try again later")
       }
     }
@@ -111,12 +126,21 @@ const Login = () => {
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:ring-4 focus:ring-cyan-200 shadow-lg"
-                >
-                  SIGN IN
-                </button>
+                {loading ? (
+                  <button
+                    disabled
+                    className="w-full bg-gradient-to-r from-cyan-500/70 to-blue-500/70 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 cursor-not-allowed"
+                  >
+                    Loading...
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:ring-4 focus:ring-cyan-200 shadow-lg"
+                  >
+                    SIGN IN
+                  </button>
+                )}
 
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">

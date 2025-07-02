@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const cors = require('cors'); 
 dotenv.config();
 
 const authRouters = require('./routes/authRoutes.js');
@@ -21,6 +22,12 @@ mongoose
         console.log('Database is not connected :(',error);
     })
 
+
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace with your frontend URL
+    credentials: true, // Allow cookies and authorization headers to be sent with requests
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+})); 
 
 app.use(cookieParser());
 app.use(express.json());
@@ -59,4 +66,4 @@ app.use((error,req,res,next)=>{
 
 // Regular Middleware : [Request] -> [Middleware 1] -> [Middleware 2] -> [Route Handler] -> [Response] 
 
-// Error Middleware : [Request] -> [Middleware 1] -> [Route Handler: calls next(error)] -> SKIP -> Error Middleware -> Response 
+// Error Middleware : [Request] -> [Middleware 1] -> [Route Handler: calls next(error)] -> SKIP -> Error Middleware -> Response

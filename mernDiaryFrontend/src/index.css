@@ -17,4 +17,7 @@
     .btn-light{
         @apply bg-cyan-50 text-blue-500 shadow-cyan-100/0 border-cyan-100 hover:bg-blue-500 hover:text-white
     }
+    .login-ui-box{
+        @apply w-80 h-[450px] rounded-full bg-blue-500 absolute rotate-45
+    }
 }

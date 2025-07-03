@@ -14,6 +14,15 @@ async function signup(req,res,next){
     }
 
 
+    // check if user already exists
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+        return next(errorHandler(400, 'User Already Exists'));
+    }
+    // If user already exists, return error with status code 400 and message 'User Already Exists'
+
+    
     const hashedPassword = bcryptjs.hashSync(password,10);
     // 10 is the salt rounds, salt rounds define how complex (and time consuming) the hashing process is.The number of rounds is an exponent of 2 , 10 rounds means 2^10 = 1024 internal iterations.Salt is just an random string added to password before hashing
 

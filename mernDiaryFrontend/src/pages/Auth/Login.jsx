@@ -45,7 +45,7 @@ const Login = () => {
 
       if (response.data) {
         dispatch(signInSuccess(response.data));
-        navigate("/home")
+        navigate("/")
       }
     } 
     catch (error) {
@@ -155,7 +155,7 @@ const Login = () => {
                   type="button"
                   className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-6 border-2 border-gray-200 hover:border-gray-300 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:ring-4 focus:ring-gray-200"
                   onClick={() => {
-                    navigate("/sign-up")
+                    navigate("/signup")
                   }}
                 >
                   CREATE NEW ACCOUNT
@@ -169,4 +169,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Login;

@@ -26,3 +26,9 @@ const App = () => {
 };
 
 export default App;
+
+
+/*
+We wrap the / route with PrivateRoute component , when a user visits / , React Router will render PrivateRoute component 
+Then based on the logic inside the PrivateRoute , it either shows the actual page (Home) or redirects to /login
+*/

@@ -15,6 +15,17 @@ async function getUser(req,res,next){
     res.status(200).json(rest);
 }
 
+
+async function signout(req,res,next){
+    try{
+        res.clearCookie('access_token').status(200).json({
+            message:'User Logged Out'
+        })
+    }catch(error){
+        next(errorHandler(error));
+    }
+}
+
 module.exports = {
-    getUser
+    signout
 }

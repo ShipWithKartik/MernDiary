@@ -16,10 +16,10 @@ const TravelStoryCard = ({
 
   return (
 
-    <div className='border border-slate-200 rounded-lg overflow-hidden bg-white hover:shadow-lg hover:shadow-slate-200 transition-all ease-in-out relative cursor-pointer mb-4 w-full max-w-sm'>
+    <div className='border border-slate-200 rounded-lg overflow-hidden bg-white hover:shadow-lg hover:shadow-slate-200 transition-all ease-in-out relative cursor-pointer mb-4 w-full max-w-[400px]'>
 
         {/* Compact image container */}
-        <div className='w-full h-80 bg-slate-100'>
+        <div className='w-full h-65 bg-slate-100'>
             <img 
             src={imageUrl} 
             alt={title} 

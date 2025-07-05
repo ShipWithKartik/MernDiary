@@ -7,6 +7,7 @@ const Home = () => {
   return (
 
     <div className="">
+      <NavBar />
       This is the Home page
       <br />
 

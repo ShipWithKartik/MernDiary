@@ -3,10 +3,25 @@ import { Link } from "react-router-dom";
 import NavBar from "../../Components/NavBar";
 import axiosInstance from "../../utils/axiosInstance";
 import TravelStoryCard from "../../Components/TravelStoryCard";
-import { ToastContainer ,toast} from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { IoMdAdd } from "react-icons/io";
+import Modal  from "react-modal";
+import AddEditTravelStory from "../../Components/AddEditTravelStory";
+
+
+
+
+
+
 
 const Home = () => {
   const [allStories, setAllStories] = useState([]);
+
+  const [openAddEditModel, setOpenAddEditModel] = useState({
+    isShown: false,
+    type: "add",
+    data: null,
+  });
 
   const getAllTravelStories = async () => {
     try {
@@ -52,9 +67,8 @@ const Home = () => {
         )
       );
 
-      if(response?.data?.updatedStory)
-        toast.success('Story Updated Successfully!');
-
+      if (response?.data?.updatedStory)
+        toast.success("Story Updated Successfully!");
     } catch (error) {
       console.error("Error updating favorite status:", error);
       // Revert the change if API call fails
@@ -65,7 +79,7 @@ const Home = () => {
             : story
         )
       );
-      toast.error('There was Some Error');
+      toast.error("There was Some Error");
       console.log("Something went wrong. Please try again!");
     }
   };
@@ -109,15 +123,44 @@ const Home = () => {
         </div>
       </div>
 
-      <ToastContainer 
-      autoClose={2500}/>
+      <Modal
+        isOpen={openAddEditModel.isShown}
+        onRequestClose={() => {}}
+        style={{
+          overlay: {
+            backgroundColor: "rgba(0,0,0,0.2)",
+            zIndex: 999,
+          },
+        }}
+        appElement={document.getElementById("root")}
+        className='w-[80vw] md:w-[40%] h-[80vh] bg-white rounded-lg mx-auto mt-14 p-5 overflow-y-scroll scrollbar-glass z-50'
+      >
+        <AddEditTravelStory 
+        storyInfo={openAddEditModel.data} 
+        type={openAddEditModel.type} 
+        onClose={()=>{
+          setOpenAddEditModel({isShown:false , type:'add' , data:null});
+        }} 
+        getAllTravelStories={getAllTravelStories}
+        />
 
+      </Modal>
+
+      <button
+        className="w-16 h-16 flex items-center justify-center rounded-full bg-cyan-400 hover:bg-cyan-700 fixed right-10 bottom-10 cursor-pointer"
+        onClick={() => {
+          setOpenAddEditModel({ isShown: true, type: "add", data: null });
+        }}
+      >
+        <IoMdAdd size={35} className="text-white text-[32px]" />
+      </button>
+
+      <ToastContainer autoClose={2200} />
     </div>
   );
 };
 
 export default Home;
-
 
 /*
 When the user clicks the hear icon on the story image , we call a updateIsFavorite(item) 
@@ -169,4 +212,3 @@ Closures store copies of primitives , not references
 We can always fetch the latest story object using that ID
 
 */
-

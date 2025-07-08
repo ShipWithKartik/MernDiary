@@ -4,6 +4,7 @@ import { MdOutlineUpdate } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 import DateSelector from './DateSelector';
 import ImageSelector from './ImageSelector';
+import TagInput from './TagInput';
 
 const AddEditTravelStory = ({
     storyInfo,
@@ -14,13 +15,17 @@ const AddEditTravelStory = ({
 
     const [visitedDate , setVisitedDate] = useState(null);
     const [title , setTitle] = useState('');
-    const [storyImg , setStoryImg] = useState(null);
+    const [storyImage , setStoryImage] = useState(null);
     const [story , setStory] = useState('');
     const [visitedLocation , setVisitedLocation] = useState([]);
 
 
 
     const handleOrUpdateClick = ()=>{
+
+    }
+
+    const handleDeleteStoryImage = ()=>{
 
     }
 
@@ -92,8 +97,9 @@ const AddEditTravelStory = ({
             </div>
 
             <ImageSelector 
-            image={storyImg} 
-            setImage={setStoryImg}/>
+            image={storyImage} 
+            setImage={setStoryImage}
+            handleDeleteImage={handleDeleteStoryImage} />
 
             <div className='flex flex-col gap-2 mt-4'>
                 <label className='input-label'>
@@ -111,6 +117,18 @@ const AddEditTravelStory = ({
                 }} >
                 </textarea>
             </div>
+
+            <div className="pt-3">
+                <label 
+                className='input-label'>
+                    VISITED LOCATIONS
+                </label>
+
+                <TagInput 
+                tags={visitedLocation} 
+                setTags={setVisitedLocation} />
+            </div>
+
         </div>
     </div>
 

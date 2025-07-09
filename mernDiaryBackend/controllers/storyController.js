@@ -10,10 +10,12 @@ async function addStory(req,res,next){
 
     const userId = req.user.id
 
-    if(!title || !story || !visitedLocation || !visitedDate || !imageUrl){
+    if(!title || !story || !visitedLocation || !visitedDate){
         return next(errorHandler(400,'All Fields are Required'));
 
     }
+
+    const placeholderImageUrl = `http://localhost:3000/assets/placeholderImage.png`;
 
     const parsedVisitedDate = new Date(parseInt(visitedDate));
     // From frontend dates are often sent as : Unix Timestamps (milliseconds) in String representation 
@@ -25,7 +27,7 @@ async function addStory(req,res,next){
             story,
             visitedLocation,
             userId,
-            imageUrl,
+            imageUrl:imageUrl || placeholderImageUrl,
             visitedDate:parsedVisitedDate
         });
 
@@ -64,11 +66,12 @@ async function imageUpload(req,res,next){
     try{
 
         // Multer adds this file property to request Object , which contains all the file metadata
-        if(!req.file){
-            return next(errorHandler(400,'No Image Uploaded'));
-        }
 
-        const imageUrl = `http://localhost:3000/uploads/${req.file.filename}`;
+        let imageUrl = '';
+        if(!req.file)
+            imageUrl = `http://localhost:3000/assets/placeholderImage.png`;
+        else
+            imageUrl = `http://localhost:3000/uploads/${req.file.filename}`;
 
         res.status(201).json({imageUrl});
 
@@ -119,7 +122,7 @@ async function editStory(req,res,next){
 
     const userId = req.user.id;
 
-    if(!title || !story || !visitedDate || !imageUrl || !visitedLocation){
+    if(!title || !story || !visitedDate || !visitedLocation){
         return next(errorHandler(400,'All Fields are required'));
     }
 

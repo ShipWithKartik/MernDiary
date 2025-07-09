@@ -35,7 +35,9 @@ const Home = () => {
     }
   }
 
-  const handleEdit = async (item) => {}
+  const handleEdit = async (item) => {
+    setOpenAddEditModel({isShown:true,type:'edit',data:item})
+  }
 
   const handleViewStory = (storyId) => {
     
@@ -166,7 +168,10 @@ const Home = () => {
       onClose={()=>{
         setOpenViewModel((prevState)=>({...prevState , isShown:false}))
       }}  
-      onEditClick={()=>{}}
+      onEditClick={()=>{
+        setOpenViewModel((prevState)=>({...prevState,isShown:false}))
+        handleEdit(openViewModel.data)
+      }}
       onDeleteClick={()=>{}}  />
       </Modal>
 

@@ -6,13 +6,21 @@ import { ToastContainer, toast } from "react-toastify"
 import { IoMdAdd } from "react-icons/io"
 import Modal from "react-modal"
 import AddEditTravelStory from "../../Components/AddEditTravelStory"
+import ViewTravelStory from './ViewTravelStory'
 
 const Home = () => {
-  const [allStories, setAllStories] = useState([])
+  const [allStories, setAllStories] = useState([]);
+
   const [openAddEditModel, setOpenAddEditModel] = useState({
     isShown: false,
     type: "add",
     data: null,
+  });
+
+  const [openViewModel , setOpenViewModel] = useState({
+    isShown:false,
+    type:'view',
+    data:null,
   })
 
   const getAllTravelStories = async () => {
@@ -29,7 +37,20 @@ const Home = () => {
 
   const handleEdit = async (item) => {}
 
-  const handleViewStory = (item) => {}
+  const handleViewStory = (storyId) => {
+    
+    const currentStory = allStories.find((story)=>story._id == storyId)
+
+    if(!currentStory)
+      return ;
+
+    setOpenViewModel({
+      isShown:true,
+      type:'view',
+      data:currentStory
+    })
+  }
+
 
   // Updated function to take storyId instead of full object
   const updateIsFavorite = async (storyId) => {
@@ -87,7 +108,7 @@ const Home = () => {
                       isFavorite={item.isFavorite}
                       visitedLocation={item.visitedLocation}
                       onEdit={() => handleEdit(item)}
-                      onClick={() => handleViewStory(item)}
+                      onClick={() => handleViewStory(item._id)}
                       onFavoriteClick={() => updateIsFavorite(item._id)}
                     />
                   )
@@ -101,6 +122,8 @@ const Home = () => {
         </div>
       </div>
 
+
+      {/* Add and Edit Story Modal */}
       <Modal
         isOpen={openAddEditModel.isShown}
         onRequestClose={() => {}}
@@ -121,6 +144,30 @@ const Home = () => {
           }}
           getAllTravelStories={getAllTravelStories}
         />
+      </Modal>
+
+
+      {/* View Travel Story Modal */}
+      <Modal 
+      isOpen={openViewModel.isShown} 
+      onRequestClose={()=>{}} 
+      style={{
+        overlay:{
+          zIndex:999,
+          backgroundColor:'rgba(0,0,0,0.2)'
+        }
+      }} 
+      appElement={document.getElementById('root')} 
+      className="w-[80vw] md:w-[40%] h-[80vh] bg-white rounded-lg mx-auto mt-14 p-5 overflow-y-scroll scrollbar-glass z-50" >
+      
+      <ViewTravelStory 
+      type={openViewModel.type} 
+      storyInfo={openViewModel.data} 
+      onClose={()=>{
+        setOpenViewModel((prevState)=>({...prevState , isShown:false}))
+      }}  
+      onEditClick={()=>{}}
+      onDeleteClick={()=>{}}  />
       </Modal>
 
       <button

@@ -8,6 +8,13 @@ const DateSelector = ({date , setDate}) => {
 
   const [openDatePicker , setOpenDatePicker] = useState(false);
 
+  const handleDateSelect = (selectedDate)=>{
+    if(selectedDate){
+      setDate(selectedDate);
+    }
+  }
+  // The selectedDate parameter is passed automatically by the DayPicker component from react-day-picker library when user selects the date (selected date is passed as an argument)
+
   
 
   return (
@@ -38,8 +45,8 @@ const DateSelector = ({date , setDate}) => {
             captionLayout='dropdown' 
             mode='single' 
             selected={date} 
-            pagedNavigation />
-
+            pagedNavigation 
+            onSelect={handleDateSelect}/>
           </div>
         )}
     </div>

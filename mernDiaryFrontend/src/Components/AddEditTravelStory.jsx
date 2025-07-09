@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { IoMdAdd, IoMdClose } from "react-icons/io";
 import { MdOutlineUpdate } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 import DateSelector from './DateSelector';
 import ImageSelector from './ImageSelector';
 import TagInput from './TagInput';
+import axiosInstance from '../utils/axiosInstance';
+import moment from 'moment';
+import { ToastContainer,toast } from 'react-toastify';
+import uploadImage from '../utils/uploadImage';
 
 const AddEditTravelStory = ({
     storyInfo,
@@ -19,9 +23,67 @@ const AddEditTravelStory = ({
     const [story , setStory] = useState('');
     const [visitedLocation , setVisitedLocation] = useState([]);
 
+    const [error , setError] = useState('');
 
+
+    const addNewTravelStory = async()=>{
+
+        try{
+            let imageUrl = '';
+
+            if(storyImage){
+                const imageUploadRes = await uploadImage(storyImage);
+
+                imageUrl = imageUploadRes.imageUrl || '';
+            }
+            const response = await axiosInstance.post('/story/add',{
+                title,
+                story,
+                imageUrl:imageUrl||'',
+                visitedDate:visitedDate 
+                ? moment(visitedDate).valueOf() 
+                : moment().valueOf(),
+                visitedLocation
+            })
+
+            if(response.data.story){
+                toast.success('Story Created Successfully');
+
+
+                getAllTravelStories();
+                // Created a new story and saved that story in the database , now our database contains the updated stories (new story added) , now we want to render this newly created story in my home page as well .Thus we are calling getAllTravlStories() function which fetches all stories for the current loggedIn user (backend verfies token and extracts userId) , this function then calls setAllStories useState hook function , which triggers a re-render
+
+                onClose();
+                // Close the add/Edit story modal when clicked on add Story and story was added successfully 
+            }
+        }catch(error){
+            console.log(error);
+        }
+
+    }
+
+    const updateTravelStory = async()=>{
+        
+    }
 
     const handleOrUpdateClick = ()=>{
+        if(!title){
+            setError('Please Enter the Title');
+            return;
+        }
+        else if(!story){
+            setError('Please Enter the Story');
+            return;
+        }
+
+        setError('');
+
+        if(type == 'edit'){
+            updateTravelStory();
+        }
+        else {
+            addNewTravelStory(); 
+        }
 
     }
 
@@ -72,15 +134,23 @@ const AddEditTravelStory = ({
                         <IoMdClose className='text-xl text-slate-400 cursor-pointer'/>
                     </button>
                 </div>
+
+
+                {error && (
+                    <p 
+                    className='text-red-500 text-xs pt-2 text-right'>
+                        {error}
+                    </p>
+                )}
             </div>
         </div>
 
 
 
         <div className="flex flex-1 flex-col gap-2 p-4">
-            <lable className="input-label">
+            <label className="input-label">
                 TITLE
-            </lable>
+            </label>
             <input 
             type="text" 
             className='text-2xl text-slate-900 outline-none'

@@ -136,7 +136,7 @@ const Home = () => {
           },
         }}
         appElement={document.getElementById("root")}
-        className="w-[80vw] md:w-[40%] h-[80vh] bg-white rounded-lg mx-auto mt-14 p-5 overflow-y-scroll scrollbar-glass z-50"
+        className="w-[70vw] md:w-[45vw] h-[100vh] bg-white rounded-lg mx-auto mt-8 p-5 overflow-y-scroll scrollbar-glass z-50"
       >
         <AddEditTravelStory
           storyInfo={openAddEditModel.data}
@@ -160,7 +160,7 @@ const Home = () => {
         }
       }} 
       appElement={document.getElementById('root')} 
-      className="w-[80vw] md:w-[40%] h-[80vh] bg-white rounded-lg mx-auto mt-14 p-5 overflow-y-scroll scrollbar-glass z-50" >
+      className="w-[70vw] md:w-[45vw] h-[100vh] bg-white rounded-lg mx-auto mt-8 p-5 overflow-y-scroll scrollbar-glass z-50" >
       
       <ViewTravelStory 
       type={openViewModel.type} 
@@ -184,7 +184,7 @@ const Home = () => {
         <IoMdAdd size={35} className="text-white text-[32px]" />
       </button>
 
-      <ToastContainer autoClose={2200} />
+      <ToastContainer autoClose={2000} />
     </div>
   )
 }

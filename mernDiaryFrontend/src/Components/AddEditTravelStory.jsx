@@ -60,7 +60,7 @@ const AddEditTravelStory = ({
 
 
                 getAllTravelStories();
-                // Created a new story and saved that story in the database , now our database contains the updated stories (new story added) , now we want to render this newly created story in my home page as well .Thus we are calling getAllTravlStories() function which fetches all stories for the current loggedIn user (backend verfies token and extracts userId) , this function then calls setAllStories useState hook function , which triggers a re-render
+                // Created a new story and saved that story in the database , now our database contains the updated stories (new story added) , now we want to render this newly created story in my home page as well .Thus we are calling getAllTravelStories() function which fetches all stories for the current loggedIn user (backend verfies token and extracts userId) , this function then calls setAllStories useState hook function , which triggers a re-render
 
                 onClose();
                 // Close the add/Edit story modal when clicked on add Story and story was added successfully 
@@ -144,12 +144,17 @@ const AddEditTravelStory = ({
             const postData = {
                 title,
                 story,
-                visitedDate: moment().valueOf(),
+                visitedDate: moment(storyInfo.visitedDate).valueOf(),
                 visitedLocation,
                 imageUrl:''
             }
 
-            const response = await axiosInstance.post('/story/edit-story/'+storyId);
+            const response = await axiosInstance.post('/story/edit-story/'+storyId,postData);
+
+
+            if(response.data){
+                toast.success('Image Deleted!');
+            }
         }
     }
 
@@ -262,6 +267,7 @@ const AddEditTravelStory = ({
             </div>
 
         </div>
+        <ToastContainer autoClose={2000} />
     </div>
 
   )

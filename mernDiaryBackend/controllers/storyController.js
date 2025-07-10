@@ -140,7 +140,10 @@ async function editStory(req,res,next){
         editStory.title = title;
         editStory.story = story;
         editStory.visitedLocation = visitedLocation;
-        editStory.imageUrl = imageUrl || placeholderImageUrl;
+        if(imageUrl == '' || imageUrl == null)
+            editStory.imageUrl = placeholderImageUrl;
+        else
+            editStory.imageUrl = imageUrl;
         editStory.visitedDate = parsedVisitedDate;
 
         await editStory.save();

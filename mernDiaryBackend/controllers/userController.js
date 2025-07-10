@@ -16,13 +16,18 @@ async function getUser(req,res,next){
 }
 
 
-async function signout(req,res,next){
-    try{
-        res.clearCookie('access_token').status(200).json({
-            message:'User Logged Out'
-        })
-    }catch(error){
-        next(errorHandler(error));
+async function signout(req, res, next) {
+    try {
+        const isProduction = process.env.NODE_ENV === 'production';
+        
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+            path: '/'
+        }).json({ message: 'Signout successful' });
+    } catch (error) {
+        next(error);
     }
 }
 

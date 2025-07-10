@@ -21,7 +21,7 @@ A full-stack personal diary web app to **capture your travel memories and person
 
 ### Frontend:
 - **ReactJS**  
-- **Context API / Redux** (if applicable)  
+- **Redux**   
 - **Axios**  
 - **React Router**
 

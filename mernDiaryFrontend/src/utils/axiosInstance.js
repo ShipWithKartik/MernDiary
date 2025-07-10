@@ -1,10 +1,12 @@
 import axios from "axios";
-const BASE_URL = 'http://localhost:3000/api';
+
+// deployed backend URL
+const BASE_URL = 'https://merndiary-1.onrender.com/api';
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
-    timeout:10000, // 10 seconds timeout
+    timeout: 10000, // 10 seconds timeout
     headers: {
         'Content-Type': 'application/json'
     }

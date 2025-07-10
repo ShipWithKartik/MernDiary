@@ -24,6 +24,11 @@ const Home = () => {
     data:null,
   })
 
+  const [searchQuery , setSearchQuery] = useState('');
+
+  const [filterType , setFilterType] = useState('');
+
+
   const getAllTravelStories = async () => {
     try {
       const response = await axiosInstance.get("/story/get-all")
@@ -123,13 +128,40 @@ const Home = () => {
     }
   };
 
+
+  const onSearchStory = async(query)=>{
+    try{
+      const response = await axiosInstance.get('/story/search',{
+        params:{
+          query:query
+        }
+      })
+
+      if(response?.data?.searchResults){
+        setFilterType('search');
+        setAllStories(response.data.searchResults);
+      }
+    }catch(error){
+      console.log();
+    }
+  }
+  const handleClearSearch = ()=>{
+    setFilterType('');
+    getAllTravelStories();
+  }
+
   useEffect(() => {
     getAllTravelStories()
   }, [])
 
   return (
     <div>
-      <NavBar />
+      <NavBar 
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}   
+      onSearchStory={onSearchStory} 
+      handleClearSearch={handleClearSearch} />
+
       <div className="container mx-auto py-10">
         <div className="flex gap-7">
           <div className="flex-1">

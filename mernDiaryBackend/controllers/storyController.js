@@ -174,16 +174,18 @@ async function deleteStory(req,res,next){
 
         // Extract the filename from imageUrl
         const imageUrl = deleteStory.imageUrl;
-        const filename = path.basename(imageUrl);
+        const placeholderImageUrl = `http://localhost:3000/assets/placeholderImage.png`;
 
-        // absolute path to the file on server
-        const filePath = path.join(__dirname,'..','uploads',filename);
+        if(imageUrl != placeholderImageUrl){
+            const filename = path.basename(imageUrl);
+            // absolute path to the file on server
+            const filePath = path.join(__dirname,'..','uploads',filename);
 
-        if(!fs.existsSync(filePath))
-            return next(errorHandler(404,"Image Not Found"));
+            if(!fs.existsSync(filePath))
+                return next(errorHandler(404,"Image Not Found"));
 
-        await fs.promises.unlink(filePath);
-
+            await fs.promises.unlink(filePath);
+        }
         res.status(200).json({message:'Story deleted Successfully'});
 
     }

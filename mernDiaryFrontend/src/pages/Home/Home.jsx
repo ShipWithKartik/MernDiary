@@ -87,6 +87,41 @@ const Home = () => {
     }
   }
 
+
+  const deleteTravelStory = async (storyData) => {
+    const storyId = storyData._id;
+  
+    // Add confirmation dialog
+    const confirmDelete = window.confirm('Are you sure you want to delete this story?');
+  
+    if (!confirmDelete) {
+      return; // Exit if user cancels
+    }
+  
+    try {
+      const response = await axiosInstance.delete(`/story/delete-story/${storyId}`);
+
+      if (response?.data?.message) {
+        // Update the state immediately by filtering out the deleted story
+        setAllStories((prevStories) => 
+          prevStories.filter(story => story._id !== storyId)
+        );
+
+        // Close the modal
+        setOpenViewModel((prevState) => ({
+          ...prevState,
+          isShown: false
+        }));
+
+        // Show success toast
+        toast.success('Story Deleted Successfully');
+      }
+    }catch (error) {
+      console.error('Error deleting story:', error);
+      toast.error('Failed to delete story. Please try again.');
+    }
+  };
+
   useEffect(() => {
     getAllTravelStories()
   }, [])
@@ -166,13 +201,19 @@ const Home = () => {
       type={openViewModel.type} 
       storyInfo={openViewModel.data} 
       onClose={()=>{
-        setOpenViewModel((prevState)=>({...prevState , isShown:false}))
+        setOpenViewModel((prevState)=>({
+          ...prevState , 
+          isShown:false}))
       }}  
       onEditClick={()=>{
-        setOpenViewModel((prevState)=>({...prevState,isShown:false}))
+        setOpenViewModel((prevState)=>({
+          ...prevState,
+          isShown:false}))
         handleEdit(openViewModel.data)
       }}
-      onDeleteClick={()=>{}}  />
+      onDeleteClick={()=>{
+        deleteTravelStory(openViewModel.data || null);
+      }}  />
       </Modal>
 
       <button
@@ -184,7 +225,17 @@ const Home = () => {
         <IoMdAdd size={35} className="text-white text-[32px]" />
       </button>
 
-      <ToastContainer autoClose={2000} />
+      <ToastContainer 
+        autoClose={2000} 
+        position="top-right"
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   )
 }

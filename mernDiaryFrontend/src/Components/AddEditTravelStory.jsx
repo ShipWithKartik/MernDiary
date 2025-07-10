@@ -267,7 +267,6 @@ const AddEditTravelStory = ({
             </div>
 
         </div>
-        <ToastContainer autoClose={2000} />
     </div>
 
   )

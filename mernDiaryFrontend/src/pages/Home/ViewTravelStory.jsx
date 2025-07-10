@@ -25,7 +25,9 @@ const ViewTravelStory = ({
                         UPDATE STORY
                     </button>
 
-                    <button className='btn-small btn-delete'>
+                    <button 
+                    className='btn-small btn-delete'
+                    onClick={onDeleteClick}>
                         <MdOutlineDelete className='text-lg'/>
                         DELETE STORY
                     </button>

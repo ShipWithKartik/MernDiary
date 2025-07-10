@@ -28,7 +28,7 @@ const allowedOrigins = [
     'http://localhost:5173', // local frontend (Vite default)
     'http://localhost:3000', // Alternative local frontend
     'http://localhost:3001', // Another alternative
-    // Add deployed frontend URL here after deployment
+    'https://mern-diary.vercel.app'
 ];
 
 app.use(cors({

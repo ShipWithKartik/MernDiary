@@ -8,6 +8,9 @@ import Modal from "react-modal"
 import AddEditTravelStory from "../../Components/AddEditTravelStory"
 import ViewTravelStory from './ViewTravelStory'
 import EmptyCard from "../../Components/EmptyCard"
+import { DayPicker } from "react-day-picker"
+import moment from "moment"
+import FilterInfo from '../../Components/FilterInfo'
 
 const Home = () => {
   const [allStories, setAllStories] = useState([]);
@@ -27,6 +30,11 @@ const Home = () => {
   const [searchQuery , setSearchQuery] = useState('');
 
   const [filterType , setFilterType] = useState('');
+
+  const [dateRange , setDateRange] = useState({
+    from:null , 
+    to:null
+  });
 
 
   const getAllTravelStories = async () => {
@@ -145,10 +153,47 @@ const Home = () => {
       console.log();
     }
   }
+
   const handleClearSearch = ()=>{
     setFilterType('');
     getAllTravelStories();
   }
+
+  const filterStoryByDate = async(day)=>{
+    try{
+      const startDate = day.from ? 
+      moment(day.from).valueOf() 
+      : null
+      const endDate = day.to ? 
+      moment(day.to).valueOf()
+      : null
+
+      if(startDate && endDate){
+        const response = await axiosInstance.get('/story/filter',{
+          params: {startDate , endDate}
+        })
+
+        if(response?.data?.filteredStories){
+          setFilterType('date');
+          setAllStories(response.data.filteredStories);
+        }
+      }
+    }catch(error){
+      console.log();
+    }
+  }
+
+  const handleDayClick = (day)=>{
+    setDateRange(day);
+    filterStoryByDate(day);
+  }
+
+
+  const resetFilter = ()=>{
+    setDateRange({from:null , to:null})
+    setFilterType('');
+    getAllTravelStories();
+  } 
 
   useEffect(() => {
     getAllTravelStories()
@@ -162,7 +207,16 @@ const Home = () => {
       onSearchStory={onSearchStory} 
       handleClearSearch={handleClearSearch} />
 
+
       <div className="container mx-auto py-10">
+
+        <FilterInfo  
+        filterType={filterType} 
+        filterDate={dateRange}  
+        onClear={()=>{
+          resetFilter();
+        }} />
+
         <div className="flex gap-7">
           <div className="flex-1">
             {allStories.length > 0 ? (
@@ -188,7 +242,8 @@ const Home = () => {
               <div>
                 <EmptyCard 
                 imgSrc={"https://images.pexels.com/photos/7958169/pexels-photo-7958169.jpeg"} 
-                message={`Start Creating Your Travel Stories! Click the 'Add' button to write down your thoughts , ideas and memories.Let's get started`} 
+                message={`No Notes Here! 
+                  Start Creating Your Travel Stories Click the 'Add' button to write down your thoughts , ideas and memories.`} 
                 setOpenAddEditModel={()=>{
                   setOpenAddEditModel({
                     isShown:true,
@@ -199,7 +254,19 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="w-[320px]"></div>
+          <div className="w-[320px]">
+            <div 
+            className="bg-white border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg">
+              <div className="p-3">
+                <DayPicker 
+                captionLayout="dropdown"
+                mode='range'
+                selected={dateRange} 
+                onSelect={handleDayClick}  
+                pagedNavigation />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

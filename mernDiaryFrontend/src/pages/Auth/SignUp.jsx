@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import PasswordInput from "../../Components/PasswordInput"
 import { useNavigate } from "react-router-dom"
 import axiosInstance from "../../utils/axiosInstance"
 import { validateEmail } from "../../utils/helper"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 const SignUp = () => {
   const [name, setName] = useState("")
@@ -12,6 +12,8 @@ const SignUp = () => {
   const [error, setError] = useState("")
 
   const navigate = useNavigate()
+
+  const {loading , currentUser} = useSelector((state)=>state.user);
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -51,6 +53,12 @@ const SignUp = () => {
       }
     }
   }
+
+  useEffect(()=>{
+    if(!loading && currentUser)
+      navigate('/');
+    
+  },[currentUser])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 overflow-hidden relative">

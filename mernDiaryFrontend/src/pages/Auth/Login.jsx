@@ -1,10 +1,11 @@
-import { use, useState } from "react"
+import { use, useEffect, useState } from "react"
 import PasswordInput from "../../Components/PasswordInput"
 import { useNavigate } from "react-router-dom"
 import axiosInstance from "../../utils/axiosInstance"
 import { validateEmail } from "../../utils/helper"
 import {useDispatch, useSelector} from "react-redux"
 import { signInStart , signInSuccess,signInFailure } from "../../redux/slice/userSlice"
+
 
 
 const Login = () => {
@@ -16,7 +17,7 @@ const Login = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const {loading} = useSelector((state)=>state.user);
+  const {loading , currentUser} = useSelector((state)=>state.user);
   // useSelector takes a function that receives the entire state and returns the part of the state you want to use in your component. In this case, we are getting the loading state from the user slice.(state.user accesses the user slice of the Redux state)
   // It helps us subscribe to the Redux state and re-render the component only when that specific part changes 
 
@@ -61,6 +62,14 @@ const Login = () => {
       }
     }
   }
+
+  useEffect(()=>{
+    if(!loading && currentUser){
+      navigate('/');
+    }
+  },[currentUser]);
+  // if a user is already logged in and tries to access /login page , the useEffect will redirect to home page 
+  // When Login.jsx mounts the useEffect runs and it checks if loading is false and currentUser is not null so it triggers navigate('/').
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-50 overflow-hidden relative">

@@ -91,4 +91,4 @@ app.use((error,req,res,next)=>{
 
 // Regular Middleware : [Request] -> [Middleware 1] -> [Middleware 2] -> [Route Handler] -> [Response] 
 
-// Error Middleware : [Request] -> [Middleware 1] -> [Route Handler: calls next(error)] -> SKIP -> Error Middleware -> Response
+// Error Middleware : [Request] -> [Middleware 1] -> [Route Handler: calls next(error)] -> SKIP -> Error Middleware -> Response.

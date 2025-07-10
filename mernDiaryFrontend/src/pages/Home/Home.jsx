@@ -7,6 +7,7 @@ import { IoMdAdd } from "react-icons/io"
 import Modal from "react-modal"
 import AddEditTravelStory from "../../Components/AddEditTravelStory"
 import ViewTravelStory from './ViewTravelStory'
+import EmptyCard from "../../Components/EmptyCard"
 
 const Home = () => {
   const [allStories, setAllStories] = useState([]);
@@ -152,7 +153,18 @@ const Home = () => {
                 })}
               </div>
             ) : (
-              <div>Empty Card Here</div>
+              <div>
+                <EmptyCard 
+                imgSrc={"https://images.pexels.com/photos/7958169/pexels-photo-7958169.jpeg"} 
+                message={`Start Creating Your Travel Stories! Click the 'Add' button to write down your thoughts , ideas and memories.Let's get started`} 
+                setOpenAddEditModel={()=>{
+                  setOpenAddEditModel({
+                    isShown:true,
+                    type:'add',
+                    data:null
+                  })
+                }} />
+              </div>
             )}
           </div>
           <div className="w-[320px]"></div>
@@ -171,7 +183,7 @@ const Home = () => {
           },
         }}
         appElement={document.getElementById("root")}
-        className="w-[70vw] md:w-[45vw] h-[100vh] bg-white rounded-lg mx-auto mt-8 p-5 overflow-y-scroll scrollbar-glass z-50"
+        className="w-[70vw] md:w-[45vw] h-[100vh] bg-white rounded-lg mx-auto mt-8 p-5 overflow-y-scroll scrollbar-elegant z-50"
       >
         <AddEditTravelStory
           storyInfo={openAddEditModel.data}
@@ -195,7 +207,7 @@ const Home = () => {
         }
       }} 
       appElement={document.getElementById('root')} 
-      className="w-[70vw] md:w-[45vw] h-[100vh] bg-white rounded-lg mx-auto mt-8 p-5 overflow-y-scroll scrollbar-glass z-50" >
+      className="w-[70vw] md:w-[45vw] h-[100vh] bg-white rounded-lg mx-auto mt-8 p-5 overflow-y-scroll scrollbar-elegant z-50" >
       
       <ViewTravelStory 
       type={openViewModel.type} 

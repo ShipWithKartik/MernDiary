@@ -69,7 +69,7 @@ app.use('/uploads',express.static(path.join(__dirname,'uploads')));
 // ROUTES AFTER - Now req.body will be available 
 
 // Use PORT variable instead of hard-coded 3000
-app.listen(PORT,()=>{
+app.listen(PORT,'0.0.0.0',()=>{
     console.log(`Server is running on port ${PORT}!`)
 });
 

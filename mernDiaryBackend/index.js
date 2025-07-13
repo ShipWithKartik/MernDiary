@@ -83,18 +83,6 @@ app.use('/uploads',express.static(path.join(__dirname,'uploads')));
 // MIDDLEWARE FIRST - Parse requests before routing 
 // ROUTES AFTER - Now req.body will be available 
 
-// Start server with Render-specific configuration
-const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}!`)
-});
-
-
-
-// These handle slow connections and prevent premature connection drops
-server.keepAliveTimeout = 120000; // 2 minutes - keeps connections alive longer
-server.headersTimeout = 120000; // 2 minutes - waits longer for complete headers
-
-
 
 app.use((error,req,res,next)=>{
 
@@ -114,3 +102,16 @@ app.use((error,req,res,next)=>{
 // Regular Middleware : [Request] -> [Middleware 1] -> [Middleware 2] -> [Route Handler] -> [Response] 
 
 // Error Middleware : [Request] -> [Middleware 1] -> [Route Handler: calls next(error)] -> SKIP -> Error Middleware -> Response.
+
+
+
+// Start server with Render-specific configuration
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}!`)
+});
+
+
+
+// These handle slow connections and prevent premature connection drops
+server.keepAliveTimeout = 120000; // 2 minutes - keeps connections alive longer
+server.headersTimeout = 120000; // 2 minutes - waits longer for complete headers

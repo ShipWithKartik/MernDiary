@@ -7,7 +7,7 @@ const path = require('path');
 const cors = require('cors'); 
 
 dotenv.config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Updated: Render's default port is 10000
 
 const authRouters = require('./routes/authRoutes.js');
 const userRouter = require('./routes/userRoutes.js');
@@ -31,7 +31,8 @@ const allowedOrigins = [
     'https://mern-diary.vercel.app'
 ];
 
-app.use(cors({
+// Enhanced CORS configuration for Render deployment
+const corsOptions = {
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
@@ -43,11 +44,25 @@ app.use(cors({
         }
     },
     credentials: true, // Allow cookies and authorization headers to be sent with requests
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-})); 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Added common headers
+    preflightContinue: false, // Handle preflight requests properly
+    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly (helps with CORS issues)
+app.options('*', cors(corsOptions));
+
+// Render-specific configuration for production
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1); // Trust Render's proxy
+}
 
 app.use(cookieParser());
 app.use(express.json());
+
 
 app.use('/api/story',storyRouter);
 app.use('/api/auth',authRouters);
@@ -68,10 +83,18 @@ app.use('/uploads',express.static(path.join(__dirname,'uploads')));
 // MIDDLEWARE FIRST - Parse requests before routing 
 // ROUTES AFTER - Now req.body will be available 
 
-// Use PORT variable instead of hard-coded 3000
-app.listen(PORT,'0.0.0.0',()=>{
+// Start server with Render-specific configuration
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}!`)
 });
+
+
+
+// These handle slow connections and prevent premature connection drops
+server.keepAliveTimeout = 120000; // 2 minutes - keeps connections alive longer
+server.headersTimeout = 120000; // 2 minutes - waits longer for complete headers
+
+
 
 app.use((error,req,res,next)=>{
 
@@ -83,7 +106,6 @@ app.use((error,req,res,next)=>{
         statusCode,
         message
     })
-
 })
 
 // Request reaches controller function , if validation fails --> errorHandler(400,'All Fields are required') . The error Handler function returns a error object 
